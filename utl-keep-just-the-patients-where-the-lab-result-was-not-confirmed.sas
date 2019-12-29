@@ -1,4 +1,4 @@
-Keep just the patients where the lab result was not confirmed
+SAS Forum: Keep just the patients where the lab result was not confirmed
 
 github
 https://tinyurl.com/u67za6y
@@ -15,8 +15,41 @@ Remove Patients where the result of the test was not repeated
         Two solutions
 
               `a. Sort and datastep
-               b. Prefered -Single Proc summary can provide the repeat number other procs cannot?
+               b. Single Proc summary can provide the repeat number other procs cannot?
                c. Proc freq but no repeat number (or proc report with dataset output
+               d. Prefered solution just proc sort
+                  Nat Wooding
+                  nathani@verizon.net
+                  proc sort data=have out=_null_  nouniquekey uniqueout = want;
+                     by sid test  res;
+                  run;
+
+*
+__      ___ __  ___
+\ \ /\ / / '_ \/ __|
+ \ V  V /| |_) \__ \
+  \_/\_/ | .__/|___/
+         |_|
+;
+
+Failed under WPS
+
+49        proc sort data=have out=_null_  nouniquekey uniqueout = want;
+                                          ^
+ERROR: Option "nouniquekey" is not known for the PROC SORT statement
+50           by sid test  res;
+NOTE: Procedure SORT was not executed because of errors detected
+
+Did not hve time to check the others, without a CLI.
+WPS express is no longer available.
+
+*_                   _
+(_)_ __  _ __  _   _| |_
+| | '_ \| '_ \| | | | __|
+| | | | | |_) | |_| | |_
+|_|_| |_| .__/ \__,_|\__|
+        |_|
+;
 
 data have;
 input Sid $ test $ repeat $ Res $24.;
@@ -43,7 +76,6 @@ cards4;
 1003 RBC 05 WITHIN_NOMAL_RANGE
 ;;;;
 run;quit;
-
 proc sort data=have out=havSrt;
 by sid test repeat res;
 run;quit;
@@ -190,5 +222,20 @@ Obs    SID     TEST            RES             COUNT
 
  1     1002    WBC     OUTSIDE_NORMAL_RANGE      1
  2     1003    RBC     OUTSIDE_NORMAL_RANGE      1
+
+
+*    _       _           _                    _
+  __| |     (_)_   _ ___| |_   ___  ___  _ __| |_
+ / _` |     | | | | / __| __| / __|/ _ \| '__| __|
+| (_| |_    | | |_| \__ \ |_  \__ \ (_) | |  | |_
+ \__,_(_)  _/ |\__,_|___/\__| |___/\___/|_|   \__|
+          |__/
+;
+
+proc sort data=have out=_null_  nouniquekey uniqueout = want;
+   by sid test  res;
+run;
+
+
 
 
